@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOOTBALL MANIA - Ultimate Football Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Menu Screen -->
+    <div id="mainMenu" class="screen active">
+        <div class="menu-container">
+            <h1 class="game-title">⚽ FOOTBALL MANIA ⚽</h1>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="showScreen('teamSelection')">🏆 CREATE TEAM</button>
+                <button class="menu-btn" onclick="showScreen('playerCustomization')">👤 CUSTOMIZE PLAYER</button>
+                <button class="menu-btn" onclick="showScreen('quickMatch')">🎮 QUICK MATCH</button>
+                <button class="menu-btn" onclick="showScreen('tournament')">🏟️ TOURNAMENT</button>
+                <button class="menu-btn" onclick="showScreen('penalty')">⚽ PENALTY SHOOTOUT</button>
+                <button class="menu-btn" onclick="showScreen('leaderboard')">📊 LEADERBOARD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Selection Screen -->
+    <div id="teamSelection" class="screen">
+        <div class="screen-header">
+            <h2>🏆 CHOOSE YOUR TEAM</h2>
+            <button class="back-btn" onclick="showScreen('mainMenu')">← BACK</button>
+        </div>
+        <div class="team-list">
+            <div class="team-card" onclick="selectTeam('Manchester United', '#DC143C')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #DC143C, #FF0000);">MU</div>
+                <h3>Manchester United</h3>
+            </div>
+            <div class="team-card" onclick="selectTeam('Barcelona', '#004D98')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #004D98, #A50044);">FCB</div>
+                <h3>Barcelona</h3>
+            </div>
+            <div class="team-card" onclick="selectTeam('Real Madrid', '#FFFFFF')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #FFFFFF, #FFC300);">RMA</div>
+                <h3>Real Madrid</h3>
+            </div>
+            <div class="team-card" onclick="selectTeam('Bayern Munich', '#DC052D')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #DC052D, #ED1C24);">FCB</div>
+                <h3>Bayern Munich</h3>
+            </div>
+            <div class="team-card" onclick="selectTeam('Liverpool', '#C8102E')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #C8102E, #FF0000);">LFC</div>
+                <h3>Liverpool</h3>
+            </div>
+            <div class="team-card" onclick="selectTeam('Paris SG', '#004170')">
+                <div class="team-logo" style="background: linear-gradient(135deg, #004170, #ED1C24);">PSG</div>
+                <h3>Paris SG</h3>
+            </div>
+        </div>
+        <div id="selectedTeam" class="selected-team-info"></div>
+    </div>
+
+    <!-- Player Customization Screen -->
+    <div id="playerCustomization" class="screen">
+        <div class="screen-header">
+            <h2>👤 CUSTOMIZE YOUR PLAYER</h2>
+            <button class="back-btn" onclick="showScreen('mainMenu')">← BACK</button>
+        </div>
+        <div class="customization-panel">
+            <div class="player-preview">
+                <div id="playerAvatar" class="player-avatar">
+                    <div class="player-body"></div>
+                    <div class="player-head"></div>
+                    <div class="player-hair"></div>
+                </div>
+            </div>
+            <div class="customization-options">
+                <div class="option-section">
+                    <h3>Physical Attributes</h3>
+                    <div class="option-group">
+                        <label>Height: <span id="heightValue">175</span>cm</label>
+                        <input type="range" id="height" min="160" max="200" value="175" oninput="updatePlayer()">
+                    </div>
+                    <div class="option-group">
+                        <label>Weight: <span id="weightValue">75</span>kg</label>
+                        <input type="range" id="weight" min="60" max="100" value="75" oninput="updatePlayer()">
+                    </div>
+                    <div class="option-group">
+                        <label>Skin Tone: <span id="skinToneValue">Medium</span></label>
+                        <input type="range" id="skinTone" min="1" max="5" value="3" oninput="updatePlayer()">
+                    </div>
+                </div>
+                <div class="option-section">
+                    <h3>Hairstyles</h3>
+                    <div class="hair-options">
+                        <button class="hair-btn active" onclick="selectHair(1)">Short</button>
+                        <button class="hair-btn" onclick="selectHair(2)">Bald</button>
+                        <button class="hair-btn" onclick="selectHair(3)">Long</button>
+                        <button class="hair-btn" onclick="selectHair(4)">Dreads</button>
+                    </div>
+                </div>
+                <div class="option-section">
+                    <h3>Position</h3>
+                    <select id="position" onchange="updatePlayer()">
+                        <option value="GK">Goalkeeper</option>
+                        <option value="DF">Defender</option>
+                        <option value="MF">Midfielder</option>
+                        <option value="FW" selected>Forward</option>
+                    </select>
+                </div>
+                <div class="option-section">
+                    <h3>Skills</h3>
+                    <div class="skill-bar">
+                        <label>Speed: <span id="speedValue">75</span>%</label>
+                        <input type="range" id="speed" min="0" max="100" value="75" oninput="updatePlayer()">
+                    </div>
+                    <div class="skill-bar">
+                        <label>Shooting: <span id="shootingValue">80</span>%</label>
+                        <input type="range" id="shooting" min="0" max="100" value="80" oninput="updatePlayer()">
+                    </div>
+                    <div class="skill-bar">
+                        <label>Passing: <span id="passingValue">70</span>%</label>
+                        <input type="range" id="passing" min="0" max="100" value="70" oninput="updatePlayer()">
+                    </div>
+                </div>
+                <button class="save-btn" onclick="savePlayer()">💾 SAVE PLAYER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jersey Customization Screen -->
+    <div id="jerseyCustomization" class="screen">
+        <div class="screen-header">
+            <h2>👕 JERSEY CUSTOMIZATION</h2>
+            <button class="back-btn" onclick="showScreen('teamSelection')">← BACK</button>
+        </div>
+        <div class="customization-panel">
+            <div class="jersey-preview">
+                <div id="jerseyView" class="jersey-display">
+                    <div class="jersey-shirt"></div>
+                    <div class="jersey-shorts"></div>
+                </div>
+            </div>
+            <div class="customization-options">
+                <div class="option-section">
+                    <h3>Primary Color</h3>
+                    <div class="color-picker">
+                        <input type="color" id="primaryColor" value="#DC143C" onchange="updateJersey()">
+                    </div>
+                </div>
+                <div class="option-section">
+                    <h3>Secondary Color</h3>
+                    <div class="color-picker">
+                        <input type="color" id="secondaryColor" value="#FFFFFF" onchange="updateJersey()">
+                    </div>
+                </div>
+                <div class="option-section">
+                    <h3>Pattern</h3>
+                    <div class="pattern-options">
+                        <button class="pattern-btn active" onclick="selectPattern('solid')">Solid</button>
+                        <button class="pattern-btn" onclick="selectPattern('stripes')">Stripes</button>
+                        <button class="pattern-btn" onclick="selectPattern('checker')">Checker</button>
+                        <button class="pattern-btn" onclick="selectPattern('gradient')">Gradient</button>
+                    </div>
+                </div>
+                <div class="option-section">
+                    <h3>Shoes</h3>
+                    <div class="shoe-options">
+                        <button class="shoe-btn" onclick="selectShoe('classic')">Classic</button>
+                        <button class="shoe-btn active" onclick="selectShoe('modern')">Modern</button>
+                        <button class="shoe-btn" onclick="selectShoe('elite')">Elite</button>
+                        <button class="shoe-btn" onclick="selectShoe('legend')">Legend</button>
+                    </div>
+                </div>
+                <button class="save-btn" onclick="saveJersey()">💾 SAVE JERSEY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Match Screen -->
+    <div id="quickMatch" class="screen">
+        <div class="screen-header">
+            <button class="back-btn" onclick="showScreen('mainMenu')">← MENU</button>
+            <div class="match-info">
+                <span id="teamScore">0 - 0</span>
+                <span id="matchTime">00:00</span>
+            </div>
+        </div>
+        <div class="game-container">
+            <div id="field" class="field">
+                <div class="goal left">
+                    <div class="goalpost"></div>
+                </div>
+                <div class="goal right">
+                    <div class="goalpost"></div>
+                </div>
+                <div id="ball" class="ball"></div>
+                <div id="player1" class="player">1</div>
+                <div id="player2" class="player">2</div>
+                <div id="player3" class="player">3</div>
+                <div id="player4" class="player">4</div>
+            </div>
+            <div class="game-controls">
+                <button class="game-btn" onclick="kickBall()">⚽ KICK BALL</button>
+                <button class="game-btn" onclick="passBall()">📤 PASS</button>
+                <button class="game-btn" onclick="shootGoal()">🥅 SHOOT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Screen -->
+    <div id="tournament" class="screen">
+        <div class="screen-header">
+            <h2>🏟️ TOURNAMENT MODE</h2>
+            <button class="back-btn" onclick="showScreen('mainMenu')">← BACK</button>
+        </div>
+        <div class="tournament-bracket">
+            <h3>Champions Cup Tournament</h3>
+            <div class="round">
+                <h4>Round 1</h4>
+                <div class="match">
+                    <div class="match-team">Team A</div>
+                    <div class="match-vs">VS</div>
+                    <div class="match-team">Team B</div>
+                </div>
+                <div class="match">
+                    <div class="match-team">Team C</div>
+                    <div class="match-vs">VS</div>
+                    <div class="match-team">Team D</div>
+                </div>
+            </div>
+            <div class="round">
+                <h4>Final</h4>
+                <div class="match">
+                    <div class="match-team">Winner 1</div>
+                    <div class="match-vs">VS</div>
+                    <div class="match-team">Winner 2</div>
+                </div>
+            </div>
+            <button class="tournament-btn" onclick="startTournament()">🏆 START TOURNAMENT</button>
+        </div>
+    </div>
+
+    <!-- Penalty Shootout Screen -->
+    <div id="penalty" class="screen">
+        <div class="screen-header">
+            <h2>⚽ PENALTY SHOOTOUT</h2>
+            <button class="back-btn" onclick="showScreen('mainMenu')">← BACK</button>
+        </div>
+        <div class="penalty-container">
+            <div class="score-display">
+                <div class="team-penalty">YOUR TEAM: <span id="yourScore">0</span></div>
+                <div class="team-penalty">OPPONENT: <span id="opponentScore">0</span></div>
+            </div>
+            <div class="penalty-field">
+                <div class="goal-container">
+                    <div class="penalty-goal"></div>
+                </div>
+                <div id="penaltyBall" class="ball"></div>
+                <div id="penaltyGoalkeeper" class="goalkeeper"></div>
+            </div>
+            <div class="penalty-controls">
+                <div class="aim-guide">
+                    <label>Power: <span id="powerDisplay">50</span>%</label>
+                    <input type="range" id="powerRange" min="30" max="100" value="50">
+                </div>
+                <div class="aim-guide">
+                    <label>Direction: <span id="directionDisplay">Center</span></label>
+                    <input type="range" id="directionRange" min="-1" max="1" value="0" step="0.1">
+                </div>
+                <button class="penalty-btn" onclick="shootPenalty()">⚽ SHOOT!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard" class="screen">
+        <div class="screen-header">
+            <h2>📊 LEADERBOARD</h2>
+            <button class="back-btn" onclick="showScreen('mainMenu')">← BACK</button>
+        </div>
+        <div class="leaderboard-container">
+            <div class="leaderboard-table">
+                <div class="leaderboard-header">
+                    <div class="col-rank">RANK</div>
+                    <div class="col-name">PLAYER</div>
+                    <div class="col-team">TEAM</div>
+                    <div class="col-wins">WINS</div>
+                    <div class="col-goals">GOALS</div>
+                </div>
+                <div class="leaderboard-row rank-1">
+                    <div class="col-rank">1</div>
+                    <div class="col-name">⚽ Player One</div>
+                    <div class="col-team">Manchester United</div>
+                    <div class="col-wins">25</div>
+                    <div class="col-goals">87</div>
+                </div>
+                <div class="leaderboard-row rank-2">
+                    <div class="col-rank">2</div>
+                    <div class="col-name">⚽ Player Two</div>
+                    <div class="col-team">Barcelona</div>
+                    <div class="col-wins">23</div>
+                    <div class="col-goals">76</div>
+                </div>
+                <div class="leaderboard-row rank-3">
+                    <div class="col-rank">3</div>
+                    <div class="col-name">⚽ Player Three</div>
+                    <div class="col-team">Real Madrid</div>
+                    <div class="col-wins">22</div>
+                    <div class="col-goals">68</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
