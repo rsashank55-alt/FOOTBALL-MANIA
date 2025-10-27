@@ -462,6 +462,97 @@ function playSound(soundType) {
     }, 10);
 }
 
+// Keyboard controls
+document.addEventListener('keydown', (event) => {
+    const activeScreen = document.querySelector('.screen.active');
+    if (!activeScreen) return;
+    
+    // Check if we're in quick match screen
+    if (activeScreen.id === 'quickMatch') {
+        switch(event.key) {
+            case ' ': // Space bar
+                event.preventDefault();
+                kickBall();
+                break;
+            case 'p':
+            case 'P':
+                event.preventDefault();
+                passBall();
+                break;
+            case 's':
+            case 'S':
+                event.preventDefault();
+                shootGoal();
+                break;
+            case 'Escape':
+                event.preventDefault();
+                showScreen('mainMenu');
+                break;
+        }
+    }
+    
+    // Check if we're in penalty screen
+    if (activeScreen.id === 'penalty') {
+        switch(event.key) {
+            case ' ': // Space bar
+                event.preventDefault();
+                shootPenalty();
+                break;
+            case 'Escape':
+                event.preventDefault();
+                showScreen('mainMenu');
+                break;
+        }
+    }
+});
+
+// Touch controls for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+document.addEventListener('touchstart', (event) => {
+    touchStartX = event.changedTouches[0].screenX;
+    touchStartY = event.changedTouches[0].screenY;
+});
+
+document.addEventListener('touchend', (event) => {
+    touchEndX = event.changedTouches[0].screenX;
+    touchEndY = event.changedTouches[0].screenY;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const activeScreen = document.querySelector('.screen.active');
+    if (!activeScreen) return;
+    
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const minSwipeDistance = 50;
+    
+    // Only process swipes in game screens
+    if (activeScreen.id === 'quickMatch') {
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // Horizontal swipe
+            if (Math.abs(deltaX) > minSwipeDistance) {
+                if (deltaX > 0) {
+                    kickBall();
+                }
+            }
+        } else {
+            // Vertical swipe
+            if (Math.abs(deltaY) > minSwipeDistance) {
+                if (deltaY > 0) {
+                    passBall();
+                } else {
+                    shootGoal();
+                }
+            }
+        }
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🎮 FOOTBALL MANIA - Game initialized!');
@@ -480,4 +571,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-update penalty displays
     document.getElementById('powerDisplay').textContent = document.getElementById('powerRange').value;
     document.getElementById('directionDisplay').textContent = 'Center';
+    
+    // Show controls info
+    showControlsInfo();
 });
+
+function showControlsInfo() {
+    // Add controls info to quick match screen
+    const quickMatchScreen = document.getElementById('quickMatch');
+    const controlsInfo = document.createElement('div');
+    controlsInfo.className = 'controls-info';
+    controlsInfo.innerHTML = `
+        <div class="controls-title">🎮 Controls</div>
+        <div class="controls-row">
+            <span>💻 <strong>Keyboard:</strong></span>
+            <span>SPACE = Kick</span>
+            <span>P = Pass</span>
+            <span>S = Shoot</span>
+            <span>ESC = Menu</span>
+        </div>
+        <div class="controls-row">
+            <span>📱 <strong>Touch:</strong></span>
+            <span>Swipe ↔️ = Kick</span>
+            <span>Swipe ⬆️ = Shoot</span>
+            <span>Swipe ⬇️ = Pass</span>
+        </div>
+    `;
+    quickMatchScreen.appendChild(controlsInfo);
+}
