@@ -13,6 +13,10 @@ const gameState = {
     currentHair: 1
 };
 
+// Game state variables
+let matchInterval = null;
+let playerAnimations = [];
+
 // Screen management
 function showScreen(screenId) {
     // Hide all screens
@@ -183,8 +187,6 @@ function savePlayer() {
 }
 
 // Game functions
-let matchInterval;
-let playerAnimations = [];
 
 function startQuickMatch() {
     showScreen('quickMatch');
