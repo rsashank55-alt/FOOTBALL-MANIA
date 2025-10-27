@@ -862,6 +862,26 @@ body {
     to { opacity: 0; transform: translate(-50%, -40%); }
 }
 
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
 /* Controls Info */
 .controls-info {
     background: rgba(255, 255, 255, 0.15);

@@ -342,9 +342,36 @@ function shootGoal() {
 function celebrateGoal() {
     const field = document.getElementById('field');
     field.style.animation = 'goal 0.5s';
+    
+    // Create confetti particles
+    createConfetti();
+    
     setTimeout(() => {
         field.style.animation = '';
     }, 500);
+}
+
+function createConfetti() {
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            left: ${Math.random() * 100}%;
+            top: -10px;
+            z-index: 9999;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: confettiFall ${2 + Math.random()}s linear;
+        `;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 2000 + Math.random() * 1000);
+    }
 }
 
 function resetBall() {
@@ -362,7 +389,7 @@ function showGoalMessage(message) {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.9);
+        background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(50,50,50,0.9));
         color: white;
         padding: 30px 50px;
         border-radius: 20px;
@@ -370,8 +397,13 @@ function showGoalMessage(message) {
         font-weight: bold;
         z-index: 1000;
         animation: fadeIn 0.3s;
+        box-shadow: 0 10px 40px rgba(255,255,255,0.3);
+        border: 3px solid rgba(255,255,255,0.5);
     `;
     document.body.appendChild(msg);
+    
+    // Add pulse animation
+    msg.style.animation = 'fadeIn 0.3s, pulse 2s infinite';
     
     setTimeout(() => {
         msg.style.animation = 'fadeOut 0.3s';
@@ -439,22 +471,80 @@ function startTournament() {
     // In a full implementation, this would trigger actual tournament matches
 }
 
-// Sound effects simulation
-const sounds = {
-    button: () => console.log('🔊 Button sound'),
-    selection: () => console.log('🔊 Selection sound'),
-    success: () => console.log('🔊 Success sound'),
-    whistle: () => console.log('🔊 Whistle sound'),
-    kick: () => console.log('🔊 Kick sound'),
-    pass: () => console.log('🔊 Pass sound'),
-    shoot: () => console.log('🔊 Shoot sound'),
-    goal: () => console.log('🔊 GOAL! Crowd erupts!'),
-    crowd: () => console.log('🔊 Crowd cheering')
-};
+// Sound effects with Web Audio API
+let audioContext = null;
 
+function initAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+// Generate sound with Web Audio API
+function generateSound(frequency, duration, type = 'sine', volume = 0.3) {
+    if (!audioContext) initAudioContext();
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.type = type;
+    oscillator.frequency.value = frequency;
+    
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+}
+
+// Sound effects
 function playSound(soundType) {
-    if (sounds[soundType]) {
-        sounds[soundType]();
+    initAudioContext();
+    
+    switch(soundType) {
+        case 'button':
+            generateSound(800, 0.1, 'sine', 0.2);
+            break;
+        case 'selection':
+            generateSound(1000, 0.15, 'triangle', 0.25);
+            break;
+        case 'success':
+            generateSound(523, 0.1, 'sine', 0.3);
+            setTimeout(() => generateSound(659, 0.1, 'sine', 0.3), 100);
+            setTimeout(() => generateSound(784, 0.2, 'sine', 0.3), 200);
+            break;
+        case 'whistle':
+            generateSound(1500, 0.3, 'sawtooth', 0.4);
+            setTimeout(() => generateSound(2000, 0.2, 'sawtooth', 0.4), 300);
+            break;
+        case 'kick':
+            generateSound(100, 0.15, 'square', 0.5);
+            break;
+        case 'pass':
+            generateSound(300, 0.1, 'triangle', 0.3);
+            break;
+        case 'shoot':
+            generateSound(400, 0.2, 'triangle', 0.6);
+            setTimeout(() => generateSound(600, 0.15, 'triangle', 0.4), 200);
+            break;
+        case 'goal':
+            // Crowd cheer sound
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    generateSound(300 + Math.random() * 200, 0.3, 'sawtooth', 0.3);
+                }, i * 100);
+            }
+            // Whistle after goal
+            setTimeout(() => {
+                generateSound(1500, 0.5, 'sawtooth', 0.5);
+            }, 600);
+            break;
+        case 'crowd':
+            generateSound(200 + Math.random() * 100, 0.5, 'sawtooth', 0.2);
+            break;
     }
     
     // Add visual feedback
