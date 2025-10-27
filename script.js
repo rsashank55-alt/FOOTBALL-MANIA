@@ -20,6 +20,13 @@ function showScreen(screenId) {
         screen.classList.remove('active');
     });
     
+    // Stop match timer if leaving game
+    if (screenId !== 'quickMatch' && matchInterval) {
+        clearInterval(matchInterval);
+        playerAnimations.forEach(anim => clearInterval(anim));
+        playerAnimations = [];
+    }
+    
     // Show selected screen
     const targetScreen = document.getElementById(screenId);
     if (targetScreen) {
@@ -177,11 +184,17 @@ function savePlayer() {
 
 // Game functions
 let matchInterval;
+let playerAnimations = [];
 
 function startQuickMatch() {
     showScreen('quickMatch');
     gameState.matchTime = 0;
+    gameState.scores.your = 0;
+    gameState.scores.opponent = 0;
     updateMatchDisplay();
+    
+    // Clear any existing intervals
+    if (matchInterval) clearInterval(matchInterval);
     
     matchInterval = setInterval(() => {
         gameState.matchTime++;
@@ -190,6 +203,9 @@ function startQuickMatch() {
     
     playSound('whistle');
     startGameAnimations();
+    
+    // Reset ball position
+    resetBall();
 }
 
 function updateMatchDisplay() {
@@ -203,9 +219,14 @@ function updateMatchDisplay() {
 }
 
 function startGameAnimations() {
+    // Clear existing animations
+    playerAnimations.forEach(anim => clearInterval(anim));
+    playerAnimations = [];
+    
     const players = document.querySelectorAll('.player');
     players.forEach(player => {
-        animatePlayer(player);
+        const animId = animatePlayer(player);
+        playerAnimations.push(animId);
     });
 }
 
@@ -214,7 +235,7 @@ function animatePlayer(player) {
     const fieldWidth = field.clientWidth;
     const fieldHeight = field.clientHeight;
     
-    setInterval(() => {
+    return setInterval(() => {
         const randomX = Math.random() * (fieldWidth - 50);
         const randomY = Math.random() * (fieldHeight - 50);
         
@@ -235,6 +256,12 @@ function kickBall() {
         ball.style.left = Math.random() * (field.clientWidth - 40) + 'px';
         ball.style.top = Math.random() * (field.clientHeight - 40) + 'px';
         ball.style.animation = '';
+        
+        // Add some visual feedback
+        ball.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            ball.style.transform = 'scale(1)';
+        }, 200);
     }, 500);
 }
 
@@ -284,20 +311,37 @@ function shootGoal() {
             gameState.scores.your++;
             playSound('goal');
             celebrateGoal();
+            showGoalMessage('🎉 GOAL!');
         } else {
             playSound('whistle');
+            showGoalMessage('❌ Saved by the goalkeeper!');
             resetBall();
         }
         
         updateMatchDisplay();
         ball.style.transition = '';
+        
+        // Auto reset ball after 2 seconds
+        setTimeout(() => {
+            resetBall();
+        }, 2000);
     }, 1000);
+    
+    // Occasionally opponent scores
+    setTimeout(() => {
+        if (Math.random() > 0.8 && gameState.matchTime > 10) {
+            gameState.scores.opponent++;
+            updateMatchDisplay();
+            showGoalMessage('😞 Opponent scored!');
+        }
+    }, 2000);
 }
 
 function celebrateGoal() {
-    document.getElementById('field').style.animation = 'goal 0.5s';
+    const field = document.getElementById('field');
+    field.style.animation = 'goal 0.5s';
     setTimeout(() => {
-        document.getElementById('field').style.animation = '';
+        field.style.animation = '';
     }, 500);
 }
 
@@ -305,6 +349,32 @@ function resetBall() {
     const ball = document.getElementById('ball');
     ball.style.left = '50%';
     ball.style.top = '50%';
+}
+
+function showGoalMessage(message) {
+    // Create message element
+    const msg = document.createElement('div');
+    msg.textContent = message;
+    msg.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 30px 50px;
+        border-radius: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        z-index: 1000;
+        animation: fadeIn 0.3s;
+    `;
+    document.body.appendChild(msg);
+    
+    setTimeout(() => {
+        msg.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => msg.remove(), 300);
+    }, 1500);
 }
 
 // Penalty shootout
@@ -410,11 +480,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-update penalty displays
     document.getElementById('powerDisplay').textContent = document.getElementById('powerRange').value;
     document.getElementById('directionDisplay').textContent = 'Center';
-});
-
-// Quick match button handler
-document.querySelectorAll('.menu-btn').forEach(btn => {
-    if (btn.textContent.includes('QUICK MATCH')) {
-        btn.addEventListener('click', startQuickMatch);
-    }
 });

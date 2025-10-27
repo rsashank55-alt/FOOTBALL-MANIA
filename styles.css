@@ -431,6 +431,8 @@ body {
     transform: translate(-50%, -50%);
     border: 3px solid #000;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    transition: all 0.5s ease;
+    z-index: 10;
 }
 
 .player {
@@ -789,6 +791,11 @@ body {
 @keyframes celebrate {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translate(-50%, -40%); }
 }
 
 /* Utility Classes */
