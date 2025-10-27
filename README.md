@@ -49,11 +49,26 @@ Track performance with rankings showing:
 ## 🎯 Game Controls
 
 ### Quick Match
+
+#### 💻 Keyboard Controls (Desktop)
+- **SPACE**: Kick the ball
+- **P**: Pass to a teammate  
+- **S**: Shoot at goal
+- **ESC**: Return to main menu
+
+#### 📱 Touch Controls (Mobile)
+- **Swipe Right ↔️**: Kick the ball
+- **Swipe Up ⬆️**: Shoot at goal
+- **Swipe Down ⬇️**: Pass to a teammate
+
+#### 🖱️ Button Controls
 - **KICK BALL**: Initiate a ball movement
 - **PASS**: Pass the ball to a teammate
 - **SHOOT**: Attempt to score a goal
 
 ### Penalty Shootout
+- **SPACE**: Shoot penalty
+- **ESC**: Return to main menu
 - Adjust **Power**: 30-100% shot power
 - Adjust **Direction**: Left, Center-Left, Center, Center-Right, Right
 - Click **SHOOT!** when ready
